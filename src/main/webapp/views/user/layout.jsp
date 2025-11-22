@@ -1,7 +1,14 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ page language="java" import ="java.util.*,model.bean.*" %>
+<%@ page language="java" import ="jakarta.servlet.http.HttpSession" %>
+
+<%
+	session.setAttribute("userID", 2);
+%>
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <title>QuizOnline - User</title>
@@ -13,13 +20,13 @@
 <!-- HEADER CHUNG -->
 <header class="header">
     <div class="header-content">
-        <a href="layout.jsp?page=exam-list" class="logo">QuizOnline</a>
+        <a href="${pageContext.request.contextPath}/examList" class="logo">QuizOnline</a>
         <nav class="nav-links">
-            <a href="layout.jsp?page=exam-list"
+            <a href="${pageContext.request.contextPath}/examList"
                class="${param.page == 'exam-list' || empty param.page ? 'nav-active' : ''}">
                 Đề thi
             </a>
-            <a href="layout.jsp?page=history"
+            <a href="${pageContext.request.contextPath}/examHistory"
                class="${param.page == 'history' ? 'nav-active' : ''}">
                 Lịch sử thi
             </a>
@@ -46,9 +53,13 @@
         <c:when test="${param.page == 'grading'}">
             <jsp:include page="exam-grading.jsp" />
         </c:when>
+        
+        <c:when test="${param.page == 'exam-list'}">
+            <jsp:include page="exam-list.jsp" />
+        </c:when>
 
         <c:otherwise>
-            <jsp:include page="exam-list.jsp" />
+        	<c:redirect url="/examList" />
         </c:otherwise>
     </c:choose>
 </div>

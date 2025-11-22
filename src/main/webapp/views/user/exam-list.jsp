@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ page language="java" import ="java.util.*,model.bean.*"%>
+
 
 <div class="page-header">
     <h1>Danh sách đề thi</h1>
@@ -12,21 +14,29 @@
 </div>
 
 <div class="exam-grid">
-    <!-- Ví dụ tĩnh, sau này thay bằng c:forEach exams -->
+	<%
+		ArrayList<Exam> examList = (ArrayList<Exam>)request.getAttribute("examList");
+	    ArrayList<Integer> questionQuantity = (ArrayList<Integer>)request.getAttribute("questionQuantity");	
+		if(examList!=null){
+			for (int i = 0 ; i < examList.size() ; i ++){
+	%>
     <div class="exam-card">
-        <h2 class="exam-title">Đề thi Java Cơ bản</h2>
-        <p class="exam-description">
-            Gồm 20 câu hỏi trắc nghiệm về Java cơ bản, thời gian làm bài 30 phút.
-        </p>
-        <div class="exam-info">
-            <div>Số câu: <strong>20</strong></div>
-            <div>Thời gian: <strong>30 phút</strong></div>
+            
+            <h2 class="exam-title"><%= examList.get(i).getTitle() %></h2> 
+            <p class="exam-description"><%= examList.get(i).getDescription() %></p>
+            
+            <div class="exam-info">
+                <div>Số câu: <strong><%= questionQuantity.get(i) %></strong></div>
+                <div>Thời gian: <strong><%= examList.get(i).getDurationMinutes() %> phút</strong></div>
+            </div>
+            
+            <a href="takeExam?examId=<%= examList.get(i).getId() %>" 
+               class="btn btn-gradient">
+                Bắt đầu thi
+            </a>
         </div>
-        <button class="btn btn-gradient"
-                onclick="window.location.href='layout.jsp?page=take&examId=1'">
-            Bắt đầu thi
-        </button>
-    </div>
-
-    <!-- thêm các card khác tương tự hoặc dùng forEach -->
+	<%
+			}
+		}
+	%>
 </div>

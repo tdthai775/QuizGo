@@ -1,61 +1,103 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="model.bean.Question" %>
+<%@ page import="model.bean.Choice" %>
 
-<div class="page-header">
-    <h1>Làm bài thi</h1>
-    <p>Đề: <strong>JSP/Servlet</strong></p>
-</div>
+<%
+    ArrayList<Question> questionList = (ArrayList<Question>) request.getAttribute("questionList");
+    ArrayList<ArrayList<Choice>> choiceList = (ArrayList<ArrayList<Choice>>) request.getAttribute("choiceList");
+    
+    String examIdStr = request.getParameter("examId");
+    
+    if (questionList == null) questionList = new ArrayList<>();
+    if (choiceList == null) choiceList = new ArrayList<>();
+%>
 
-<!-- header nhỏ trong trang -->
-<div class="header-content" style="margin-bottom: 20px; padding: 0;">
-    <div class="exam-header-info">
-        <span>Đề: <strong>JSP/Servlet</strong></span>
-        <span>Câu: <strong>3 / 20</strong></span>
-        <span class="timer">Thời gian còn: <strong>24:15</strong></span>
+<form action="<%= request.getContextPath() %>/submitExam" method="POST" id="examForm">
+    
+    <input type="hidden" name="examId" value="<%= (examIdStr != null) ? examIdStr : "" %>">
+
+    <div class="page-header">
+        <h1>Làm bài thi</h1>
+        <p>Mã đề: <strong><%= (examIdStr != null) ? examIdStr : "N/A" %></strong></p>
     </div>
-</div>
 
-<div class="question-card">
-    <div class="question-header">
-        <div class="question-number">Câu hỏi 3 / 20</div>
-        <div class="question-mark">1 điểm</div>
-    </div>
-
-    <h2 class="question-text">JSP là viết tắt của từ gì?</h2>
-
-    <div class="options">
-        <div class="option">
-            <input type="radio" id="option-a" name="answer" value="A">
-            <label for="option-a">A. Java Servlet Page</label>
-        </div>
-        <div class="option">
-            <input type="radio" id="option-b" name="answer" value="B">
-            <label for="option-b">B. Java Server Page</label>
-        </div>
-        <div class="option">
-            <input type="radio" id="option-c" name="answer" value="C">
-            <label for="option-c">C. Java Session Page</label>
-        </div>
-        <div class="option">
-            <input type="radio" id="option-d" name="answer" value="D">
-            <label for="option-d">D. Java Servlet Program</label>
+    <div class="header-content" style="margin-bottom: 20px; padding: 0;">
+        <div class="exam-header-info">
+            <span>Tổng số câu: <strong><%= questionList.size() %></strong></span>
+            <span class="timer">Thời gian còn: <strong>Loading...</strong></span>
         </div>
     </div>
-</div>
 
-<div class="navigation">
-    <button class="btn btn-secondary">Câu trước</button>
-    <button class="btn btn-gradient">Câu tiếp</button>
-    <button class="btn btn-primary"
-            onclick="return confirm('Bạn có chắc muốn nộp bài?')">
-        Nộp bài
-    </button>
-</div>
+    <% 
+        for (int i = 0; i < questionList.size(); i++) {
+            Question q = questionList.get(i);
+            
+            String inputType = "radio";
+            String typeText = "(Chọn 1 đáp án)";
+            
+            if (q.getType() != null && q.getType().equalsIgnoreCase("multi")) {
+                inputType = "checkbox";
+                typeText = "(Chọn nhiều đáp án)";
+            }
+    %>
+        
+        <div class="question-card" id="question-<%= q.getId() %>">
+            <div class="question-header">
+                <div class="question-number">Câu hỏi <%= i + 1 %> / <%= questionList.size() %></div>
+                <div class="question-mark">ID: <%= q.getId() %></div>
+            </div>
+
+            <h2 class="question-text">
+                <%= q.getContent() %> 
+                <span style="font-size: 14px; color: #666; font-weight: normal;">
+                    <%= typeText %>
+                </span>
+            </h2>
+
+            <div class="options">
+                <%                  
+                    ArrayList<Choice> currentChoices = new ArrayList<>();
+                    if (i < choiceList.size()) {
+                        currentChoices = choiceList.get(i);
+                    }
+
+                    for (int j = 0; j < currentChoices.size(); j++) {
+                        Choice c = currentChoices.get(j);
+                %>
+                    
+                    <div class="option">
+                        <input type="<%= inputType %>" 
+                               id="choice-<%= c.getId() %>" 
+                               name="q_<%= q.getId() %>" 
+                               value="<%= c.getId() %>">
+                               
+                        <label for="choice-<%= c.getId() %>">
+                            <%= c.getContent() %>
+                        </label>
+                    </div>
+                    
+                <% 
+                    } 
+                %>
+            </div>
+        </div>
+        
+    <% 
+        } 
+    %>
+
+    <div class="navigation">
+        <button type="submit" class="btn btn-primary"
+                onclick="return confirm('Bạn có chắc muốn nộp bài?')">
+            Nộp bài
+        </button>
+    </div>
+</form>
 
 <script>
-    // Countdown timer demo
-    let timeLeft = 24 * 60 + 15; // sec
+    // Script đếm ngược
+    let timeLeft = 45 * 60; 
     function updateTimer() {
         const minutes = Math.floor(timeLeft / 60);
         const seconds = timeLeft % 60;
@@ -65,8 +107,11 @@
         }
         if (timeLeft <= 0) {
             alert('Hết thời gian làm bài!');
+            document.getElementById("examForm").submit();
+        } else {
+            timeLeft--;
         }
-        timeLeft--;
     }
     setInterval(updateTimer, 1000);
+    updateTimer(); 
 </script>

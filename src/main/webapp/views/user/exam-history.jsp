@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ page language="java" import ="java.util.*,model.bean.*"%>
 
 <div class="page-header">
     <h1>Lịch sử bài thi</h1>
@@ -19,21 +20,35 @@
         </tr>
         </thead>
         <tbody>
-        <!-- ví dụ tĩnh, sau này dùng c:forEach history -->
+        <%
+		ArrayList<Submission> submissionList = (ArrayList<Submission>)request.getAttribute("submissionList");
+        ArrayList<String> examTitleList = (ArrayList<String>)request.getAttribute("examTitleList");
+		if(submissionList!=null){
+			for (int i = 0 ; i < submissionList.size() ; i ++){
+		%>
         <tr>
-            <td><strong>JSP/Servlet cơ bản</strong></td>
-            <td>12/11/2025 10:00</td>
-            <td><span class="score">9.0</span></td>
-            <td><span class="badge badge-success">Đã chấm</span></td>
-            <td><a href="layout.jsp?page=result&submission=1" class="action-link">Xem</a></td>
+            <td><strong><%= examTitleList.get(i) %></strong></td>
+            <td> <%= submissionList.get(i).getSubmittedAt() %></td>
+            <% if(submissionList.get(i).getStatus().equals("done")){
+            %>
+            	<td><span class="score"><%= submissionList.get(i).getScore() %></span></td>
+            	<td><span class="badge badge-success">Đã chấm</span></td>
+            	<td><a href="examResult?submissionId=<%=submissionList.get(i).getId() %>" class="action-link">Xem</a></td>
+            <%
+            }
+            else{
+            %>
+            	<td><span class="score warning">Đang chấm</span></td>
+            	<td><span class="badge badge-warning">Pending</span></td>
+            	<td><span class="score warning">Wait</a></td>
+            <%
+            }
+            %>
         </tr>
-        <tr>
-            <td><strong>Java OOP</strong></td>
-            <td>10/11/2025 09:30</td>
-            <td><span class="score warning">Đang chấm</span></td>
-            <td><span class="badge badge-warning">Pending</span></td>
-            <td><a href="layout.jsp?page=grading&submission=2" class="action-link">Trạng thái</a></td>
-        </tr>
+        <%
+			}
+		}
+		%>
         </tbody>
     </table>
 </div>
