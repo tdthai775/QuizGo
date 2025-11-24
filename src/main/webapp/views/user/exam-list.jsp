@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 
 <div class="page-header">
@@ -11,22 +10,30 @@
     <input type="text" placeholder="Tìm kiếm đề thi...">
 </div>
 
-<div class="exam-grid">
-    <!-- Ví dụ tĩnh, sau này thay bằng c:forEach exams -->
-    <div class="exam-card">
-        <h2 class="exam-title">Đề thi Java Cơ bản</h2>
-        <p class="exam-description">
-            Gồm 20 câu hỏi trắc nghiệm về Java cơ bản, thời gian làm bài 30 phút.
-        </p>
-        <div class="exam-info">
-            <div>Số câu: <strong>20</strong></div>
-            <div>Thời gian: <strong>30 phút</strong></div>
-        </div>
-        <button class="btn btn-gradient"
-                onclick="window.location.href='layout.jsp?page=take&examId=1'">
-            Bắt đầu thi
-        </button>
-    </div>
+<c:if test="${not empty errorMessage}">
+    <div style="color: red; margin-bottom: 15px; font-weight: bold;">${errorMessage}</div>
+</c:if>
 
-    <!-- thêm các card khác tương tự hoặc dùng forEach -->
+<div class="exam-grid">
+    <c:forEach var="exam" items="${examList}">
+        <div class="exam-card">
+            <h2 class="exam-title">${exam.title}</h2>
+            <p class="exam-description">
+                ${exam.description}
+            </p>
+            <div class="exam-info">
+                <div>Số câu: <strong>${exam.questionCount}</strong></div>
+                <div>Thời gian: <strong>${exam.durationMinutes} phút</strong></div>
+            </div>
+            
+            <button class="btn btn-gradient"
+                    onclick="window.location.href='${pageContext.request.contextPath}/user/exam?action=take&examId=${exam.id}'">
+                Bắt đầu thi
+            </button>
+        </div>
+    </c:forEach>
+    
+    <c:if test="${empty examList}">
+        <p>Hiện tại chưa có đề thi nào.</p>
+    </c:if>
 </div>

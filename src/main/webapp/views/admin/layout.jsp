@@ -1,17 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
+
+<c:set var="currentPage" value="${requestScope.page != null ? requestScope.page : param.page}" />
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>QuizOnline Admin</title>
-	
-	<link rel="stylesheet" href="<c:url value='/views/admin/styles/layout.css' />">	
+    <title>Admin Panel - QuizOnline</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/views/admin/styles/layout.css">
 </head>
 <body>
 
 <div class="app">
-    <!-- ========== SIDEBAR ========== -->
     <aside class="sidebar">
         <div class="sidebar-header">
             <div class="logo-circle">Q</div>
@@ -22,28 +23,24 @@
         </div>
 
         <nav class="sidebar-menu">
-            <a href="layout.jsp?page=dashboard"
-               class="menu-item ${param.page == 'dashboard' || empty param.page ? 'active' : ''}">
-                <span class="menu-icon">🏠</span>
-                <span>Dashboard</span>
+            <a href="${pageContext.request.contextPath}/admin/dashboard" 
+               class="menu-item ${currentPage == 'dashboard' || empty currentPage ? 'active' : ''}">
+                <i class="fas fa-home menu-icon"></i> Dashboard
             </a>
 
-            <a href="layout.jsp?page=exams"
-               class="menu-item ${param.page == 'exams' ? 'active' : ''}">
-                <span class="menu-icon">📝</span>
-                <span>Đề thi</span>
+            <a href="${pageContext.request.contextPath}/admin/exams" 
+               class="menu-item ${currentPage == 'manage-exams' || currentPage == 'exam-create' || currentPage == 'exam-edit' ? 'active' : ''}">
+                <i class="fas fa-file-alt menu-icon"></i> Đề thi
             </a>
 
-            <a href="layout.jsp?page=results"
-               class="menu-item ${param.page == 'results' ? 'active' : ''}">
-                <span class="menu-icon">📊</span>
-                <span>Kết quả</span>
+            <a href="${pageContext.request.contextPath}/admin/results" 
+               class="menu-item ${currentPage == 'results' || currentPage == 'result-detail' ? 'active' : ''}">
+                <i class="fas fa-chart-bar menu-icon"></i> Kết quả
             </a>
 
-            <a href="layout.jsp?page=users"
-               class="menu-item ${param.page == 'users' ? 'active' : ''}">
-                <span class="menu-icon">👤</span>
-                <span>Người dùng</span>
+            <a href="${pageContext.request.contextPath}/admin/users" 
+               class="menu-item ${currentPage == 'manage-users' ? 'active' : ''}">
+                <i class="fas fa-users menu-icon"></i> Người dùng
             </a>
         </nav>
 
@@ -51,32 +48,51 @@
             <div class="user-box">
                 <div class="user-avatar">A</div>
                 <div class="user-info">
-                    <span class="user-name">admin</span>
+                    <span class="user-name">${sessionScope.user.username}</span>
                     <span class="user-role">Administrator</span>
                 </div>
             </div>
-            <button class="btn-logout">Đăng xuất</button>
+            <a href="${pageContext.request.contextPath}/auth?action=logout" class="btn-logout">Đăng xuất</a>
         </div>
     </aside>
 
-    <!-- ========== CONTENT ========== -->
     <main class="content">
         <c:choose>
-            <c:when test="${empty param.page || param.page == 'dashboard'}">
+            <c:when test="${empty currentPage || currentPage == 'dashboard'}">
                 <jsp:include page="dashboard.jsp" />
             </c:when>
 
-            <c:when test="${param.page == 'exams'}">
+            <c:when test="${currentPage == 'manage-exams'}">
                 <jsp:include page="manage-exams.jsp" />
             </c:when>
+            <c:when test="${currentPage == 'exam-create'}">
+                <jsp:include page="exam-create.jsp" />
+            </c:when>
+            <c:when test="${currentPage == 'exam-edit'}">
+                <jsp:include page="exam-edit.jsp" />
+            </c:when>
 
-            <c:when test="${param.page == 'results'}">
+            <c:when test="${currentPage == 'results'}">
                 <jsp:include page="manage-results.jsp" />
             </c:when>
+            <c:when test="${currentPage == 'result-detail'}">
+                <jsp:include page="result-detail.jsp" />
+            </c:when>
 
-            <c:when test="${param.page == 'users'}">
+            <c:when test="${currentPage == 'manage-users'}">
                 <jsp:include page="manage-users.jsp" />
             </c:when>
+            
+            <c:when test="${currentPage == 'questions'}">
+                <jsp:include page="questions.jsp" />
+            </c:when>
+            <c:when test="${currentPage == 'question-form'}">
+                <jsp:include page="question-form.jsp" />
+            </c:when>
+
+            <c:otherwise>
+                <div style="padding:20px;">404 - Không tìm thấy trang: ${currentPage}</div>
+            </c:otherwise>
         </c:choose>
     </main>
 </div>

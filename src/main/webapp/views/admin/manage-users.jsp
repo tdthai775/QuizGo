@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 
 <section class="page-header">
@@ -10,43 +9,37 @@
 <div class="card table-card">
     <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom:10px;">
         <span>Danh sách người dùng</span>
-        <button class="btn-primary">+ Thêm người dùng</button>
+        <a href="${pageContext.request.contextPath}/views/auth/register.jsp" class="btn-primary" style="text-decoration: none;">+ Thêm người dùng</a>
     </div>
 
     <table class="data-table">
         <thead>
         <tr>
-            <th>#</th>
+            <th>ID</th>
             <th>Tên đăng nhập</th>
             <th>Họ tên</th>
+            <th>Email</th>
             <th>Quyền</th>
-            <th>Trạng thái</th>
             <th>Hành động</th>
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td>1</td>
-            <td>admin</td>
-            <td>Quản trị viên</td>
-            <td><span class="badge">Admin</span></td>
-            <td>Hoạt động</td>
-            <td class="actions">
-                <a>Sửa</a>
-                <a>Xóa</a>
-            </td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td>nguyenvana</td>
-            <td>Nguyễn Văn A</td>
-            <td><span class="badge">User</span></td>
-            <td>Hoạt động</td>
-            <td class="actions">
-                <a>Sửa</a>
-                <a>Xóa</a>
-            </td>
-        </tr>
+        <c:forEach var="u" items="${userList}">
+            <tr>
+                <td>${u.id}</td>
+                <td>${u.username}</td>
+                <td>${u.fullname}</td>
+                <td>${u.email}</td>
+                <td>
+                    <span class="badge" style="background: #ebf8ff; color: #2c5282;">${u.role}</span>
+                </td>
+                <td class="actions">
+                    <a href="${pageContext.request.contextPath}/admin/users?action=delete&id=${u.id}" 
+                       onclick="return confirm('Xóa user này sẽ xóa hết lịch sử thi của họ. Bạn chắc chứ?')" 
+                       style="color: red;">Xóa</a>
+                </td>
+            </tr>
+        </c:forEach>
         </tbody>
     </table>
 </div>

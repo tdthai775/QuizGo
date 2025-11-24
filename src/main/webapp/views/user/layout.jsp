@@ -6,25 +6,23 @@
     <meta charset="UTF-8">
     <title>QuizOnline - User</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-   	<link rel="stylesheet" href="<c:url value='/views/user/styles/layout.css' />">
-</head>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/views/user/styles/layout.css">
 <body>
-<!-- HEADER CHUNG -->
 <header class="header">
     <div class="header-content">
-        <a href="layout.jsp?page=exam-list" class="logo">QuizOnline</a>
+        <a href="${pageContext.request.contextPath}/user/exam?action=list" class="logo">QuizOnline</a>
         <nav class="nav-links">
-            <a href="layout.jsp?page=exam-list"
+            <a href="${pageContext.request.contextPath}/user/exam?action=list"
                class="${param.page == 'exam-list' || empty param.page ? 'nav-active' : ''}">
                 Đề thi
             </a>
-            <a href="layout.jsp?page=history"
+            <a href="${pageContext.request.contextPath}/user/exam?action=history"
                class="${param.page == 'history' ? 'nav-active' : ''}">
                 Lịch sử thi
             </a>
-            <span>Xin chào, <strong>${sessionScope.username}</strong></span>
-            <a href="logout" class="logout">Đăng xuất</a>
+            
+            <span>Xin chào, <strong>${sessionScope.user.fullname}</strong></span>
+            <a href="${pageContext.request.contextPath}/auth?action=logout" class="logout">Đăng xuất</a>
         </nav>
     </div>
 </header>
